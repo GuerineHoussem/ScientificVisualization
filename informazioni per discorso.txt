@@ -1,0 +1,29 @@
+Normalization and Clustering
+The analysis begins by preparing the data for clustering. All features are scaled using MinMaxScaler to ensure that no single variable disproportionately influences the result. Using the Elbow and Silhouette methods, the optimal number of clusters was determined to be three. The K-Means algorithm was then applied to group the patients, assigning each a cluster label of 0, 1, or 2.
+
+Univariate Analysis: Finding Differences
+To validate the clusters, statistical tests were performed to see if the observed differences were significant.
+
+ANOVA (for continuous variables) found that features like time, age, ejection_fraction, and serum_creatinine had significantly different means across the three clusters.
+
+Chi-square tests (for binary variables) revealed that DEATH_EVENT, sex, smoking, and diabetes were the most powerful features distinguishing the groups.
+
+A key observation is the strong agreement between these statistical tests and the subsequent findings. The features with low statistical significance (high p-values), such as anaemia and high_blood_pressure, were precisely those that showed small differences in their mean proportions across the clusters. As we'll see next, these were also the same features that the Random Forest model identified as having low importance.
+
+Multivariate Analysis: Confirming Importance with Random Forest
+To confirm these findings, a Random Forest model was trained to predict the cluster labels from all features simultaneously. This multivariate approach assesses feature importance in the context of all other variables.
+
+The initial results were strong, with the model achieving about 94% accuracy. The Permutation Importance scores identified the top four most influential features (DEATH_EVENT, sex, diabetes, smoking) but also showed that several columns had zero or negative importance.
+
+Based on this, a key refinement step was taken: the unimportant columns were dropped. The Random Forest model was then re-trained on this smaller, more focused set of features. This led to better results, with the model's accuracy improving to 99% ✅. This process confirmed that the dropped columns were essentially noise and solidified the critical role of the top four features in defining the clusters.
+
+Visualization and Interpretation
+Visual tools were used to make the cluster characteristics easy to understand. A heatmap of standardized feature means provided a clear "fingerprint" for each group, while bar plots and box plots offered detailed comparisons. 📊
+
+By combining all the evidence, the analysis successfully defined three distinct patient profiles:
+
+Cluster 0: Predominantly male smokers who survived (0% death rate).
+
+Cluster 1: Mostly non-smoking female diabetics with a low mortality rate (15%).
+
+Cluster 2: A high-risk group where all patients died (100% death rate), characterized by older age, lower ejection_fraction, and higher serum_creatinine.
